@@ -1,4 +1,3 @@
-
 """
 Mathilde Jeannin, 2023
 jeannin@lix.polytechnique.fr 
