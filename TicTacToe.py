@@ -114,6 +114,29 @@ def play_game():
         if TTC.terminal:
             break
 
+def play_game_alone():
+    turn = True
+    two_players = True
+    tree = MCTS(two_players=two_players)
+    TTC = TicTacToe((None,)*9, turn, False, False)
+    print(TTC.to_pretty_string())
+    while True:
+        if turn :
+            for _ in range(1000):
+                tree.do_rollout(TTC)
+            TTC = tree.choose(TTC)
+            print(TTC.to_pretty_string())
+            turn = False
+            if TTC.terminal:
+                break
+        for _ in range(1000):
+            tree.do_rollout(TTC) #-> un noeud = un etat
+        TTC = tree.choose(TTC)
+        print(TTC.to_pretty_string())
+        turn = True
+        if TTC.terminal:
+            break
+
 def new_tic_tac_toe_board():
     return TicTacToe()
 
