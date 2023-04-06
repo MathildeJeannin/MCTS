@@ -142,4 +142,4 @@ def new_tic_tac_toe_board():
 
 
 if __name__ == "__main__":
-    play_game()
+    play_game_alone()
