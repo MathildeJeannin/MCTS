@@ -35,6 +35,7 @@ class MCTS:
         leaf = path[-1]
         self._expand(leaf)
         reward = self._simulation(leaf)
+        # print(reward)
         self._backpropagation(path, reward)
 
     def _select_node(self, node):
@@ -43,6 +44,7 @@ class MCTS:
         while True :
             path.append(node)
             if node not in self.children or not self.children[node]:
+                # print("je suis la")
                 return path # node unexplored or terminal
             unexplored = self.children[node] - self.children.keys()
             if unexplored:
