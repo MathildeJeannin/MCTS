@@ -67,7 +67,7 @@ class ExploBoard(Node):
         pretty_grid = np.empty((self.row,self.col),str)
         i = 0
         for i,grid in enumerate(self.board):
-            r,c = int(i/self.row),i%self.row
+            r,c = int(i/self.col),i%self.col-1
             if grid == True and i != self.position: ##deja visite
                 pretty_grid[r,c] = "."
             elif grid == False and i != self.position: ## obstacle et pas la pose actuelle
