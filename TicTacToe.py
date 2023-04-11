@@ -45,7 +45,7 @@ class TicTacToe(Node):
             return 0.5  # Board is a tie
         # The winner is neither True, False, nor None
         raise RuntimeError(f"board has unknown winner type {self.winner}")
-         
+        
     def make_move(self, index):
         if self.board[index]!=None:
             raise RuntimeError("Invalid move")
@@ -142,4 +142,4 @@ def new_tic_tac_toe_board():
 
 
 if __name__ == "__main__":
-    play_game()
+    play_game_alone()

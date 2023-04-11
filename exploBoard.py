@@ -50,7 +50,7 @@ class ExploBoard(Node):
         elif self.board[self.position]==False: #collision
             return 0
         else:
-            return 1
+            return 1 + (self.col*self.row-1)/self.nb_move
     
     def make_move(self, index):
         if self.board[index]==False: #obstacle
@@ -83,7 +83,7 @@ class ExploBoard(Node):
         )
 
 def explore_board(size, max_obstacles):
-    nb_obstacles = random.randint(0,max_obstacles)
+    nb_obstacles = random.randint(1,max_obstacles)
     obstacles=[]
     grid_size = size[0]*size[1]
     for i in range(nb_obstacles):
@@ -97,6 +97,8 @@ def explore_board(size, max_obstacles):
             board += (True,)
         else:
             board += (None,)
+    board = (None, None, None, False, None,None,False,None,False,None,None,None,None,None,None,None)
+    pose_init = 15
     tree = MCTS(two_players=False)
     explo = ExploBoard(size=size, board=board, position=pose_init, terminal=False, nb_move=0)
     print(explo.to_pretty_string())
@@ -104,11 +106,13 @@ def explore_board(size, max_obstacles):
     for _ in range(100):
         tree.do_rollout(explo)
     while True:
-        for _ in range(50):
+        for _ in range(100):
             tree.do_rollout(explo)
         explo = tree.choose(explo)
         print(explo.to_pretty_string())
         print("max reward = " + str(max(tree.rewards[i] for i in tree.rewards.keys())))
+        for move in explo.all_possible_children():
+            print(tree.rewards[move])
         if explo.terminal:
             print("nb de coups : " + str(explo.nb_move))
             break
@@ -116,4 +120,4 @@ def explore_board(size, max_obstacles):
 
 
 if __name__ == "__main__" :
-    explore_board([5,5],5)
+    explore_board([4,4],3)
