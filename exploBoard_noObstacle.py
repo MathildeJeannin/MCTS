@@ -105,3 +105,4 @@ def explore_board(size):
 
 if __name__ == "__main__" :
     explore_board([5,5])
+    
