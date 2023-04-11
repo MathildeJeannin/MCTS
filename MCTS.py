@@ -62,10 +62,12 @@ class MCTS:
         log_visit_parent = 2*math.log(self.visit_count[node])
         
         def _uct(node):
-            return self.rewards[node]/self.visit_count[node] + self.exploration_weight * math.sqrt((log_visit_parent)/self.visit_count[node])
+            explo = self.exploration_weight * math.sqrt((log_visit_parent)/self.visit_count[node])
+            exploit = self.rewards[node]/self.visit_count[node]
+            return exploit + explo
         
         selected_node = None
-        max_uct = 0
+        max_uct = -10000000
 
         for child in self.children[node]:
             uct = _uct(child)
@@ -75,6 +77,7 @@ class MCTS:
         # $$
         # selected_node = max(children, key=uct) 
         # -> si plusieurs max il prend le 1er de la liste donc pas random. i.e. bien garder la ligne selected_node = random.choice(children) pour definir la variable
+        # print(max_uct, self.rewards[node], selected_node.board, selected_node.position)
         return selected_node
 
     def _simulation(self, node):
