@@ -66,7 +66,7 @@ class ExploBoard(Node):
             tup = self.board[:index] + (True,) + self.board[index+1:]
             is_terminal = not None in tup
             if self.board[index]==None:
-                current_reward += 1/nb_move
+                current_reward += 1*(self.col&self.row)/nb_move
         return ExploBoard(size = [self.row, self.col], board = tup, position = index, terminal = is_terminal, nb_move = nb_move, current_reward=current_reward)
 
     def to_pretty_string(self):
@@ -115,7 +115,7 @@ def explore_board(size, max_obstacles):
             tree.do_rollout(explo)
         explo = tree.choose(explo)
         print(explo.to_pretty_string())
-        time.sleep(0.2)
+        # time.sleep(0.2)
         if explo.terminal:
             print("max reward = " + str(max(tree.rewards[i] for i in tree.rewards.keys())))
             print("nb de coups : " + str(explo.nb_move))
@@ -124,4 +124,4 @@ def explore_board(size, max_obstacles):
 
 
 if __name__ == "__main__" :
-    explore_board([4,4],3)
+    explore_board([5,5],3)
