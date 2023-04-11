@@ -48,7 +48,7 @@ class ExploBoard(Node):
         if not self.terminal:
             raise RuntimeError(f"reward called on nonterminal board {self.board}")
         else:
-            return (self.col*self.row-1)/math.exp(self.nb_move)
+            return (self.col*self.row-1)/self.nb_move
     
     def make_move(self, index):
         tup = self.board[:index] + (True,) + self.board[index+1:]
@@ -87,14 +87,15 @@ def explore_board(size):
     explo = ExploBoard(size=size, board=board, position=pose_init, terminal=False, nb_move=0)
     print(explo.to_pretty_string())
     i = 0
-    for _ in range(100):
-        tree.do_rollout(explo)
+    # for _ in range(100):
+    #     tree.do_rollout(explo)
     while True:
         for _ in range(100):
             tree.do_rollout(explo)
         explo = tree.choose(explo)
         print(explo.to_pretty_string())
         if explo.terminal:
+            print("max reward = " + str(max(tree.rewards[i] for i in tree.rewards.keys())))
             print("nb de coups : " + str(explo.nb_move))
             break
         i+=1
@@ -102,4 +103,4 @@ def explore_board(size):
 
 
 if __name__ == "__main__" :
-    explore_board([3,3])
+    explore_board([4,4])

@@ -2,6 +2,7 @@ from MCTS import MCTS, Node
 import math
 import random 
 import numpy as np
+import time
 
 '''
 explo grille de 5x5 comme morpion (plus ?)
@@ -97,23 +98,20 @@ def explore_board(size, max_obstacles):
             board += (True,)
         else:
             board += (None,)
-    board = (None, None, None, False, None,None,False,None,False,None,None,None,None,None,None,None)
-    pose_init = 15
     tree = MCTS(two_players=False)
     explo = ExploBoard(size=size, board=board, position=pose_init, terminal=False, nb_move=0)
     print(explo.to_pretty_string())
     i = 0
-    for _ in range(100):
-        tree.do_rollout(explo)
+    # for _ in range(10000):
+    #     tree.do_rollout(explo)
     while True:
         for _ in range(100):
             tree.do_rollout(explo)
         explo = tree.choose(explo)
         print(explo.to_pretty_string())
-        print("max reward = " + str(max(tree.rewards[i] for i in tree.rewards.keys())))
-        for move in explo.all_possible_children():
-            print(tree.rewards[move])
+        # time.sleep(0.3)
         if explo.terminal:
+            print("max reward = " + str(max(tree.rewards[i] for i in tree.rewards.keys())))
             print("nb de coups : " + str(explo.nb_move))
             break
         i+=1
