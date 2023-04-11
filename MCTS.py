@@ -77,7 +77,6 @@ class MCTS:
         # $$
         # selected_node = max(children, key=uct) 
         # -> si plusieurs max il prend le 1er de la liste donc pas random. i.e. bien garder la ligne selected_node = random.choice(children) pour definir la variable
-        # print(max_uct, self.rewards[node], selected_node.board, selected_node.position)
         return selected_node
 
     def _simulation(self, node):
@@ -101,12 +100,6 @@ class MCTS:
     
     def _backpropagation(self, path, reward):
         ## back propagate the reward up to all parents until root
-        # is_root = self.children[node][0]
-        # while not is_root:
-        #     self.rewards[node] += reward
-        #     self.visit_count[node] += 1
-        #     node = self.children[node][1]
-        #     is_root = self.children[node][0]
         for node in reversed(path):
             self.rewards[node]+=reward
             self.visit_count[node]+=1
