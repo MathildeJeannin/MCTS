@@ -84,7 +84,7 @@ class ExploBoard(Node):
         )
 
 def explore_board(size, max_obstacles):
-    nb_obstacles = random.randint(1,max_obstacles)
+    nb_obstacles = random.randint(0,max_obstacles)
     obstacles=[]
     grid_size = size[0]*size[1]
     for i in range(nb_obstacles):
