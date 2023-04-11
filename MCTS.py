@@ -35,7 +35,6 @@ class MCTS:
         leaf = path[-1]
         self._expand(leaf)
         reward = self._simulation(leaf)
-        # print(reward)
         self._backpropagation(path, reward)
 
     def _select_node(self, node):
@@ -44,7 +43,6 @@ class MCTS:
         while True :
             path.append(node)
             if node not in self.children or not self.children[node]:
-                # print("je suis la")
                 return path # node unexplored or terminal
             unexplored = self.children[node] - self.children.keys()
             if unexplored:
@@ -74,7 +72,6 @@ class MCTS:
             if uct > max_uct:
                 max_uct = uct
                 selected_node = child
-                # print(uct, selected_node.board, self.visit_count[selected_node])
         # $$
         # selected_node = max(children, key=uct) 
         # -> si plusieurs max il prend le 1er de la liste donc pas random. i.e. bien garder la ligne selected_node = random.choice(children) pour definir la variable
