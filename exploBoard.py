@@ -16,13 +16,14 @@ Position robot : coord dans la grille --> gerer cas pose robot = pose obstacle
 
 class ExploBoard(Node):
 
-    def __init__(self, size, board, position, terminal, nb_move):
+    def __init__(self, size, board, position, terminal, nb_move, current_reward):
         self.row = size[0] ## ex : grille de 4x6 size=[4,6]
         self.col = size[1]
         self.board = board ## tuple de taille size[0]*size[1]
         self.terminal = terminal 
         self.position = position ## position du robot de la forme (row-1)*size[0]+col 
         self.nb_move = nb_move
+        self.current_reward = current_reward
     
     def all_possible_children(self):
         if self.terminal:
@@ -46,28 +47,33 @@ class ExploBoard(Node):
         return self.terminal
     
     def reward(self):
-        if not self.terminal:
-            raise RuntimeError(f"reward called on nonterminal board {self.board}")
-        elif self.board[self.position]==False: #collision
-            return 0
-        else:
-            return 1 + (self.col*self.row-1)/self.nb_move
+        return self.current_reward
+        # if not self.terminal:
+        #     raise RuntimeError(f"reward called on nonterminal board {self.board}")
+        # elif self.board[self.position]==False: #collision
+        #     return 0
+        # else:
+        #     return 1 + (self.col*self.row-1)/self.nb_move
     
     def make_move(self, index):
+        current_reward = self.current_reward
+        nb_move = self.nb_move + 1
         if self.board[index]==False: #obstacle
             is_terminal = True
             tup = self.board
+            current_reward += -1
         else : 
             tup = self.board[:index] + (True,) + self.board[index+1:]
             is_terminal = not None in tup
-        nb_move = self.nb_move + 1
-        return ExploBoard(size = [self.row, self.col], board = tup, position = index, terminal = is_terminal, nb_move = nb_move)
+            if self.board[index]==None:
+                current_reward += 1/nb_move
+        return ExploBoard(size = [self.row, self.col], board = tup, position = index, terminal = is_terminal, nb_move = nb_move, current_reward=current_reward)
 
     def to_pretty_string(self):
         pretty_grid = np.empty((self.row,self.col),str)
         i = 0
         for i,grid in enumerate(self.board):
-            r,c = int(i/self.col),i%self.col-1
+            r,c = int(i/self.col),i%self.col
             if grid == True and i != self.position: ##deja visite
                 pretty_grid[r,c] = "."
             elif grid == False and i != self.position: ## obstacle et pas la pose actuelle
@@ -99,7 +105,7 @@ def explore_board(size, max_obstacles):
         else:
             board += (None,)
     tree = MCTS(two_players=False)
-    explo = ExploBoard(size=size, board=board, position=pose_init, terminal=False, nb_move=0)
+    explo = ExploBoard(size=size, board=board, position=pose_init, terminal=False, nb_move=0, current_reward=0)
     print(explo.to_pretty_string())
     i = 0
     # for _ in range(10000):
@@ -109,7 +115,7 @@ def explore_board(size, max_obstacles):
             tree.do_rollout(explo)
         explo = tree.choose(explo)
         print(explo.to_pretty_string())
-        # time.sleep(0.3)
+        time.sleep(0.2)
         if explo.terminal:
             print("max reward = " + str(max(tree.rewards[i] for i in tree.rewards.keys())))
             print("nb de coups : " + str(explo.nb_move))
