@@ -31,14 +31,16 @@ class ExploBoard(Node):
         moves = []
         list_moves = [1, -1, self.col, -self.col] ## gauche droite bas haut
         for move in list_moves:
-            future_position = self.position + move
-            if future_position >= 0 and future_position < self.row*self.col: 
-                if not (move==1 and ((self.position+1)%self.col)==0) and not (move==-1 and self.position%self.col==0):
-                ## pas possible si :
-                ##      on veut aller à droite mais on est déjà tout à droite
-                ##      on veut aller à gauche mais on est déjà tout à gauche 
-                    future_move = self.make_move(future_position)
-                    moves.append(future_move)
+            # future_position = self.position + move
+            # if future_position >= 0 and future_position < self.row*self.col: 
+            #     if not (move==1 and ((self.position+1)%self.col)==0) and not (move==-1 and self.position%self.col==0):
+            #     ## pas possible si :
+            #     ##      on veut aller à droite mais on est déjà tout à droite
+            #     ##      on veut aller à gauche mais on est déjà tout à gauche 
+                    # future_move = self.make_move(future_position, move)
+                    # moves.append(future_move)
+            future_move = self.make_move(self.position, move)
+            moves.append(future_move)
         if len(moves)==0:
             print("no move")
         return moves
@@ -48,25 +50,29 @@ class ExploBoard(Node):
     
     def reward(self):
         return self.current_reward
-        # if not self.terminal:
-        #     raise RuntimeError(f"reward called on nonterminal board {self.board}")
-        # elif self.board[self.position]==False: #collision
-        #     return 0
-        # else:
-        #     return 1 + (self.col*self.row-1)/self.nb_move
     
-    def make_move(self, index):
+
+    def make_move(self, position, move):
+        index = position + move
         current_reward = self.current_reward
         nb_move = self.nb_move + 1
-        if self.board[index]==False: #obstacle
+        # print(index, position, move)
+        if  index < 0 or index >= self.row*self.col or (move==1 and ((self.position+1)%self.col)==0) or (move==-1 and self.position%self.col==0):
+            # hors de la grille de la grille
             is_terminal = True
             tup = self.board
             current_reward += -1
-        else : 
-            tup = self.board[:index] + (True,) + self.board[index+1:]
-            is_terminal = not None in tup
-            if self.board[index]==None:
-                current_reward += 1*(self.col&self.row)/nb_move
+        else:
+            if self.board[index]==False:
+                # obstacle
+                is_terminal = True
+                tup = self.board
+                current_reward += -1  
+            else: 
+                tup = self.board[:index] + (True,) + self.board[index+1:]
+                is_terminal = not None in tup
+                if self.board[index]==None:
+                    current_reward += 1*(self.col*self.row)/nb_move
         return ExploBoard(size = [self.row, self.col], board = tup, position = index, terminal = is_terminal, nb_move = nb_move, current_reward=current_reward)
 
     def to_pretty_string(self):
@@ -121,7 +127,8 @@ def explore_board(size, max_obstacles):
             print("nb de coups : " + str(explo.nb_move))
             break
         i+=1
+    return explo.nb_move, explo.board[explo.position]
 
 
 if __name__ == "__main__" :
-    explore_board([5,5],3)
+    explore_board([7,7],5)
